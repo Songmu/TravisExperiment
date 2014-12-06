@@ -63,5 +63,6 @@ sub main {
         return;
     }
     system(qw/git tag/, $tag);
+    system(qw/git remote set-url origin/, sprintf('git@github.com:%s/%s.git', $OWNER, $REPO));
     system(qw/git push --tags/);
 }
