@@ -1,4 +1,12 @@
 language: perl
 perl:
-  - "5.20"
-
+  - '5.20'
+after_success:
+  - echo -e "Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/deploy.key\n" >> ~/.ssh/config
+  - openssl aes-256-cbc -k "$SERVER_KEY" -in deploy_key.enc -d -a -out deploy.key
+  - cp deploy.key ~/.ssh/
+  - chmod 600 ~/.ssh/deploy.key
+  - script/tagify
+env:
+  global:
+    secure: HDKyvFRIpZIFrM74iIuTE7MyLc3z/L4RXZfvXT/gcKVeIz9jUJOyItuiqj+jDIuyaq64w83NyUZERdJdtcnGC+RtcEMJ5lDp/O5gtpIx5zIURM08cfbCZ++FGUWUI8weWBnnYzgy9GPaFXKGRBKmwh3bEvu89JUVTt8wHeDWV6E=

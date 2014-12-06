@@ -12,7 +12,6 @@ sub get_pr_num_and_branch {
     my @commits = `git show HEAD`;
 
     if ($commits[1] !~ /^Merge/) {
-        warn "not a merge commit\n";
         return;
     }
     my $commit_msg = $commits[5];
@@ -35,8 +34,34 @@ sub get_pr_num_and_branch {
     my $reg = quotemeta $OWNER;
     $branch =~ s!^$reg/!!;
 
-    ($pr_num, $data->{head}{ref});
+    $data->{head}{ref};
 }
 
+sub tag_name_from_branch {
+    my $branch = shift;
 
+    my ($tag) = $branch =~ m!([^/]+)$!;
+    $tag;
+}
 
+main();
+
+sub main {
+    my $branch = get_pr_num_and_branch;
+    unless ($branch) {
+        say 'not a merged commit';
+        return;
+    }
+    my $tag = tag_name_from_branch($branch);
+    unless ($tag) {
+        say 'not a tagify target';
+        return;
+    }
+
+    my %tags = map { chomp; ($_ => 1) } `git tag`;
+    if ($tags{$tag}) {
+        return;
+    }
+    system(qw/git tag/, $tag);
+    system(qw/git push --tags/);
+}
