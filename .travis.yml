@@ -1,4 +1,6 @@
 language: perl
 perl:
-  - "5.20"
-
+- '5.20'
+env:
+  global:
+    secure: HDKyvFRIpZIFrM74iIuTE7MyLc3z/L4RXZfvXT/gcKVeIz9jUJOyItuiqj+jDIuyaq64w83NyUZERdJdtcnGC+RtcEMJ5lDp/O5gtpIx5zIURM08cfbCZ++FGUWUI8weWBnnYzgy9GPaFXKGRBKmwh3bEvu89JUVTt8wHeDWV6E=
