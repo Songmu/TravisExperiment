@@ -9,21 +9,18 @@ my $OWNER = 'Songmu';
 my $REPO  = 'TravisExperiment';
 
 sub get_pr_num_and_branch {
-    my @commits = `git show HEAD`;
+    chomp(my $msg = `git log HEAD~.. --merges --oneline`);
+    # e.g. 492764e Merge pull request #3 from Songmu/fix/remote
+    return unless $msg;
 
-    if ($commits[1] !~ /^Merge/) {
-        return;
-    }
-    my $commit_msg = $commits[5];
-    my ($pr_num, $branch) = $commit_msg =~ /^\s+Merge pull request #([0-9]+) from (.*)$/;
+    my ($pr_num, $branch) = $msg =~ /^[a-f0-9]{7} Merge pull request #([0-9]+) from (.*)$/;
     return unless $pr_num;
 
     my $res = HTTP::Tiny->new->get(
         sprintf 'https://api.github.com/repos/%s/%s/pulls/%d?state=closed', $OWNER, $REPO, $pr_num
     );
     unless ($res->{success}) {
-        warn 'API request failed';
-        return;
+        warn 'API request failed'; return;
     }
     my $data = decode_json $res->{content};
     my $label = $data->{head}{label};
@@ -50,19 +47,16 @@ main();
 sub main {
     my $branch = get_pr_num_and_branch;
     unless ($branch) {
-        say 'not a merged commit';
-        return;
+        say 'not a merged commit'; return;
     }
     my $tag = tag_name_from_branch($branch);
     unless ($tag) {
-        say 'not a tagify target';
-        return;
+        say 'not a tagify target'; return;
     }
 
     my %tags = map { chomp; ($_ => 1) } `git tag`;
     if ($tags{$tag}) {
-        say "tag: $tag already tagged";
-        return;
+        say "tag: $tag already tagged"; return;
     }
     system(qw/git tag/, $tag);
     system(qw/git remote set-url origin/, sprintf('git@github.com:%s/%s.git', $OWNER, $REPO));
