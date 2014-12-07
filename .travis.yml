@@ -3,9 +3,10 @@ perl:
   - '5.20'
 after_success:
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\nIdentityFile ~/.ssh/deploy.key\n" >> ~/.ssh/config
-  - openssl aes-256-cbc -k "$SERVER_KEY" -in deploy_key.enc -d -a -out deploy.key
-  - cp deploy.key ~/.ssh/
+  - openssl aes-256-cbc -k "$SERVER_KEY" -in deploy_key.enc -d -a -out ../deploy.key
+  - cp ../deploy.key ~/.ssh/
   - chmod 600 ~/.ssh/deploy.key
+  - git remote set-url origin git@github.com:Songmu/TravisExperiment.git
   - script/tagify
 env:
   global:
