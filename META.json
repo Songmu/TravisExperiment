@@ -52,6 +52,16 @@
       }
    },
    "release_status" : "unstable",
-   "version" : "0.01",
-   "x_authority" : "cpan:SONGMU"
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/Songmu/TravisExperiment/issues"
+      },
+      "homepage" : "https://github.com/Songmu/TravisExperiment",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/Songmu/TravisExperiment.git",
+         "web" : "https://github.com/Songmu/TravisExperiment"
+      }
+   },
+   "version" : "0.01"
 }
